@@ -6,4 +6,4 @@ $ venv/bin/python -m pip install fastapi[all]
 $ venv/bin/uvicorn src.main:app --reload
 ```
 
-stop it
+
