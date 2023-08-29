@@ -1,20 +1,28 @@
+from datetime import datetime, time, timedelta
 from typing import Annotated
+from uuid import UUID
 
-from fastapi import FastAPI, Path, Query
+from fastapi import Body, FastAPI
 
 app = FastAPI()
 
 
-@app.get("/items/{item_id}")
+@app.put("/items/{item_id}")
 async def read_items(
-    *,
-    item_id: Annotated[int, Path(title="The ID of the item to get", ge=0, le=1000)],
-    q: str,
-    size: Annotated[float, Query(gt=0, lt=10.5)],
+    item_id: UUID,
+    start_datetime: Annotated[datetime | None, Body()] = None,
+    end_datetime: Annotated[datetime | None, Body()] = None,
+    repeat_at: Annotated[time | None, Body()] = None,
+    process_after: Annotated[timedelta | None, Body()] = None,
 ):
-    results = {"item_id": item_id}
-    if q:
-        results.update({"q": q})
-    return results
-
-
+    start_process = start_datetime + process_after
+    duration = end_datetime - start_process
+    return {
+        "item_id": item_id,
+        "start_datetime": start_datetime,
+        "end_datetime": end_datetime,
+        "repeat_at": repeat_at,
+        "process_after": process_after,
+        "start_process": start_process,
+        "duration": duration,
+    }
